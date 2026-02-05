@@ -30,7 +30,6 @@ def login_user(db: Session, username: str, password: str):
 
     return token
 
-
 #notes
 
 # remember dharvi

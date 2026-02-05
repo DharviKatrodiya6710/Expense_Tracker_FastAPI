@@ -20,11 +20,15 @@ def login(
     user:LoginRequest,db:get_db):
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
-):
+
     token = login_user(db, form_data.username, form_data.password)
     return {"access_token": token, "token_type": "bearer"}
 
 @api_router.get("/me")
-def me(user=Depends(get_current_user)):
+def me():
+    user_id=1
+    user = get_user_by_id(user_id)
     return user
+
+
 

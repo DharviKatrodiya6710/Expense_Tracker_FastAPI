@@ -7,7 +7,6 @@ class ExpenseCreate(BaseModel):
     description: str
     date: d
 
-
 class ExpenseUpdate(BaseModel):
     amount: Optional[float] = None
     description: Optional[str] = None
