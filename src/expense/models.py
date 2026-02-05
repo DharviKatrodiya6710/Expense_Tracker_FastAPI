@@ -10,3 +10,14 @@ class Expense(Base):
     description = Column(String)
     date = Column(Date, default=date.today)
     user_id = Column(Integer, ForeignKey("users.id"))
+
+
+def __repr__(self):
+    return f"""
+        Expense Info:
+            id:{self.id}
+            amount:{self.amount}
+            decription:{self.description}
+            date:{self.date}
+            user_id:{self.user_id}
+"""
