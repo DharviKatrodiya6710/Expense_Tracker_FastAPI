@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from utils.db.session import get_db
-from src.user.schemas import UserCreate
+from src.user.schemas import UserCreate,LoginRequest
 from src.user.crud import register_user, login_user
 from src.user.models import get_current_user
 
@@ -17,6 +17,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
 @api_router.post("/login")
 def login(
+    user:LoginRequest,db:get_db):
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
@@ -26,3 +27,4 @@ def login(
 @api_router.get("/me")
 def me(user=Depends(get_current_user)):
     return user
+

@@ -12,9 +12,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(api_router)
 
-@app.get("/")
-def root():
-    return {"message": "API running"}
+
 
 
 #401 - unauthorized, token invalid
