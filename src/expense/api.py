@@ -1,20 +1,20 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from utils.db.session import get_db
-from src.expense.schemas import ExpenseCreate, ExpenseUpdate
+from src.expense.schemas import ExpenseCreate, ExpenseUpdate, ExpenseOut
 from src.expense.crud import add_expense,update_expense, delete_expense
-from src.user.models import get_current_user
+from src.user.auth import get_current_user
 
 api_router = APIRouter(prefix="/expense", tags=["Expense"])
 
-@api_router.post("/add")
+@api_router.post("/add", response_model=ExpenseOut)
 def add(
     expense: ExpenseCreate,
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    return add_expense(db, expense, user_id=user["user_id"])
+    return add_expense(db, expense, user.id)
 
 @api_router.put("/update/")
 def update(
@@ -23,8 +23,10 @@ def update(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    return update_expense(db, expense_id, expense, user_id=user["user_id"])
-
+    updated = update_expense(db, expense_id, expense, user_id=user.id)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return updated
 
 @api_router.delete("/delete/{expense_id}")
 def delete(
@@ -32,7 +34,11 @@ def delete(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    return delete_expense(db, expense_id, user_id=user["user_id"])
+    deleted = delete_expense(db, expense_id, user_id=user.id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    return deleted
+
 
 #notes
 

@@ -1,17 +1,24 @@
+from typing import Generator
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from utils.db.base import Base
+from sqlalchemy.orm import sessionmaker, Session
+from src.config import Config
 
-DATABASE_URL = "postgresql://postgres:dharvi@localhost:5432/Expense_Tracker_System"
+engine = create_engine(
+    Config.assemble_db_connection(),
+    echo=True
+)
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-#engine - manage database using gateway
+

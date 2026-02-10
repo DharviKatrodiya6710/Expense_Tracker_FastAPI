@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from src.expense.models import Expense
 
-def add_expense(db: Session, expense, user_id: int):
+def add_expense(db, expense, user_id):
     new = Expense(
         amount=expense.amount,
         description=expense.description,
@@ -12,7 +12,7 @@ def add_expense(db: Session, expense, user_id: int):
     db.add(new)
     db.commit()
     db.refresh(new)
-    return {"message": "Expense added", "id": new.id}
+    return new
 
 
 def update_expense(db: Session, expense_id: int, expense, user_id: int):

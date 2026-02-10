@@ -1,17 +1,43 @@
-import datetime, uuid
-from sqlalchemy import Column, String, DateTime, Boolean
-from sqlalchemy.orm import as_declarative, declared_attr
+import datetime
+from sqlalchemy import Boolean, Column, DateTime, Integer
+from sqlalchemy.orm import declarative_base, declared_attr
 
-def str_uuid():
-    return str(uuid.uuid4())
+Base = declarative_base()
 
-@as_declarative()
-class ModelBase:
-    id = Column(String, primary_key=True, default=str_uuid)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
-    is_deleted = Column(Boolean, default=False)
+class ModelBase(Base):
+    __abstract__ = True
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    created_at = Column(
+        DateTime,
+        default=datetime.datetime.utcnow,
+        nullable=False
+    )
+
+    updated_at = Column(
+        DateTime,
+        default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow,
+        nullable=False,
+    )
+
+    created_by = Column(Integer, nullable=True)
+    updated_by = Column(Integer, nullable=True)
+
+    is_deleted = Column(Boolean, default=False, nullable=False)
 
     @declared_attr
     def __tablename__(cls):
-        return cls.__name__.lower()
+        name = cls.__name__
+        result = ""
+        prev_upper = False
+
+        for i, ch in enumerate(name):
+            if ch.isupper() and (i == 0 or not prev_upper):
+                result += "_" + ch.lower()
+            else:
+                result += ch.lower()
+            prev_upper = ch.isupper()
+
+        return result.lstrip("_")

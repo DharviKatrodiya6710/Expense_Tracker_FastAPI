@@ -5,8 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context
-
-from config import DATABASE_URL
+from src.config import DATABASE_URL
 from utils.db.base import Base
 
 # IMPORTANT: import models so Alembic can see tables
